@@ -1,0 +1,10 @@
+[package]
+name = "home-easy"
+version = "0.1.0"
+authors = ["Nicolas Senaud <nicolas@senaud.fr>"]
+
+[dependencies]
+libc = "0.2.29"
+log = "0.3.8"
+log4rs = "0.7.0"
+rppal = "0.1.3"
