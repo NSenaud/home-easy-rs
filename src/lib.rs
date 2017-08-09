@@ -12,7 +12,7 @@ use libc::{sched_get_priority_max, sched_setscheduler};
 
 use prelude::*;
 
-unsafe fn scheduler_realtime() {
+pub unsafe fn scheduler_realtime() {
     let mut p: libc::sched_param;
     p.sched_priority = sched_get_priority_max(libc::SCHED_RR);
 
