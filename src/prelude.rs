@@ -1,16 +1,15 @@
-struct EncodedFrame {
-    pin: u8,
-    sender: [bool; 26],
-    interruptor: [bool; 4],
+use wiringpi::pin::{WiringPi, OutputPin};
+
+pub struct EncodedFrame<'a> {
+    pub pin: &'a OutputPin<WiringPi>,
+    pub sender: [bool; 26],
+    pub interruptor: [bool; 4],
+    pub state: bool,
 }
 
-struct DecodedFrame {
-    pin: u8,
-    sender: u32,
-    interruptor: u8,
-}
-
-enum State {
-    On,
-    Off
+pub struct DecodedFrame {
+    pub pin: u16,
+    pub sender: u32,
+    pub interruptor: u32,
+    pub state: String,
 }
