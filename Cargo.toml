@@ -4,9 +4,10 @@ version = "0.1.0"
 authors = ["Nicolas Senaud <nicolas@senaud.fr>"]
 
 [dependencies]
+clap = "2.26"
 libc = "0.2.29"
 log = "0.3.8"
 log4rs = "0.7.0"
 rppal = "0.1.3"
-# wiringpi = "0.2.1"
-wiringpi = { path = "/home/nsd/Repos/rust-wiringpi/" }
+# wiringpi = "0.2.1" # Does not work, lack support of Raspberry Pi 3
+wiringpi = { git = "https://github.com/NSenaud/rust-wiringpi" }
