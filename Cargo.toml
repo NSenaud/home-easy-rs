@@ -2,6 +2,18 @@
 name = "home-easy"
 version = "0.1.0"
 authors = ["Nicolas Senaud <nicolas@senaud.fr>"]
+description = "Simple Rust home-easy protocol implementation"
+
+repository = "https://github.com/NSenaud/home-easy-rs"
+readme = "README.md"
+keywords = ["home-automation", "raspberry pi", "gpio"]
+categories = ["embedded", "hardware-support", "command-line-utilities"]
+license = "Apache License 2.0"
+license-file = "LICENSE"
+
+[badges]
+travis-ci = { repository = "https://travis-ci.org/NSenaud/home-easy-rs", branch = "master" }
+maintenance = { status = "experimental" }
 
 [dependencies]
 clap = "2.26"
