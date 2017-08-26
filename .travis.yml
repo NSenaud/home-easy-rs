@@ -1,11 +1,30 @@
-language: rust
-rust:
-  - stable
-  - beta
-  - nightly
-matrix:
-  allow_failures:
-    - rust: nightly
+language: generic
+os:
+  - linux
+dist: trusty
+sudo: required
+
+env:
+  - RUST=nightly
+  - RUST=beta
+  - RUST=stable
+
+# Install rust
+install:
+  - sudo apt-get install gcc-arm-linux-gnueabihf
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y
+  - export PATH="$HOME/.cargo/bin:$PATH"
+  - rustup toolchain install $RUST
+  - rustup default $RUST
+  - rustup target add arm-unknown-linux-gnueabihf
+  - rustc -V
+  - cargo -V
+  - cp ci/config ~/.cargo/config
+  - git clone https://github.com/raspberrypi/tools.git ~/pi-tools
+  - cp ci/gcc-sysroot ~/pi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
+  - chmod +x ~/pi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/gcc-sysroot
+
 script:
-  - rustup target add armv7-unknown-linux-gnueabihf
-  - cargo build --target=armv7-unknown-linux-gnueabihf --verbose --all
+  - ./cross64 "build -v"
+  - ./cross64 "doc -v"
+  - cargo build -v --target=arm-unknown-linux-gnueabihf

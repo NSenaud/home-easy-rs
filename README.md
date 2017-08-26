@@ -1,6 +1,8 @@
 home-easy-rs
 ============
 
+![Travis CI](https://travis-ci.org/NSenaud/home-easy-rs.svg?branch=master)
+
 Description
 -----------
 
