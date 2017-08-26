@@ -11,7 +11,7 @@ categories = ["embedded", "hardware-support", "command-line-utilities"]
 license-file = "LICENSE"
 
 [badges]
-travis-ci = { repository = "https://travis-ci.org/NSenaud/home-easy-rs", branch = "master" }
+travis-ci = { repository = "NSenaud/home-easy-rs", branch = "master" }
 maintenance = { status = "experimental" }
 
 [dependencies]
