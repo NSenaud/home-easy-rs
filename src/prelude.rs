@@ -1,4 +1,4 @@
-use wiringpi::pin::{WiringPi, OutputPin};
+use wiringpi::pin::{OutputPin, WiringPi};
 
 pub struct EncodedFrame<'a> {
     pub pin: &'a OutputPin<WiringPi>,

@@ -7,12 +7,12 @@ extern crate wiringpi;
 
 pub mod prelude;
 
-use std::mem;
+use std::mem::MaybeUninit;
 use std::{thread, time};
 
 use libc::{sched_get_priority_max, sched_setscheduler};
 use wiringpi::pin::Value::{High, Low};
-use wiringpi::pin::{WiringPi, OutputPin};
+use wiringpi::pin::{OutputPin, WiringPi};
 
 use prelude::*;
 
@@ -20,16 +20,16 @@ pub unsafe fn scheduler_realtime() {
     info!("Switching to realtime scheduler...");
 
     let mut p: libc::sched_param;
-    p.sched_priority = sched_get_priority_max(libc::SCHED_RR);
-
     // Convince the Rust compiler that p is initialized.
-    p = mem::uninitialized();
+    p = MaybeUninit::uninit().assume_init();
+
+    p.sched_priority = sched_get_priority_max(libc::SCHED_RR);
     if sched_setscheduler(0, libc::SCHED_RR, &p) == -1 {
         // TODO: Add errno readout.
         warn!("Failed to switch to realtime scheduler.");
         eprintln!("Failed to switch to realtime scheduler.");
     }
-    
+
     info!("Switched to realtime scheduler.");
 }
 
@@ -37,10 +37,10 @@ pub unsafe fn scheduler_standard() {
     info!("Switching to standard scheduler...");
 
     let mut p: libc::sched_param;
-    p.sched_priority = sched_get_priority_max(libc::SCHED_OTHER);
-
     // Convince the Rust compiler that p is initialized.
-    p = mem::uninitialized();
+    p = MaybeUninit::uninit().assume_init();
+
+    p.sched_priority = sched_get_priority_max(libc::SCHED_OTHER);
     if sched_setscheduler(0, libc::SCHED_OTHER, &p) == -1 {
         // TODO: Add errno readout.
         warn!("Failed to switch to standard scheduler.");
@@ -74,15 +74,17 @@ fn power2(power: usize) -> u32 {
     for _ in 0..power {
         integer *= 2;
     }
-    
+
     debug!("power2({}) -> {}", power, integer);
 
     integer
 }
 
 impl<'a> EncodedFrame<'a> {
-    pub fn from_decoded<'b>(decoded: &DecodedFrame,
-                            pin: &'b OutputPin<WiringPi>) -> EncodedFrame<'b> {
+    pub fn from_decoded<'b>(
+        decoded: &DecodedFrame,
+        pin: &'b OutputPin<WiringPi>,
+    ) -> EncodedFrame<'b> {
         let mut encoded = EncodedFrame {
             pin: pin,
             sender: [false; 26],

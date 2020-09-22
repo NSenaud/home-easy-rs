@@ -13,11 +13,10 @@ This code produce both a libray to use with your own projects, and a CLI utility
 Cross-Compile
 -------------
 
-You must first choose a toolchain to cross-compile. Only ARMv7 architecture on Raspberry Pi have been tested yet, however it should work on AArch64. You must first install the choosen toolchain via `rustup`, then compile with `cargo`. For instance:
-
+You can use [cross](https://github.com/rust-embedded/cross) to compile for ARM
+architecture (tested on Raspberry Pi):
 ```bash
-rustup target add armv7-unknown-linux-gnueabihf
-cargo build --target=armv7-unknown-linux-gnueabihf --release
+cross build --target=armv7-unknown-linux-musleabihf --release
 ```
 
 CLI Utility Usage

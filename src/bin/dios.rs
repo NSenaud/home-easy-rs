@@ -2,13 +2,13 @@
 extern crate clap;
 #[macro_use]
 extern crate log;
-extern crate log4rs;
-extern crate libc;
-extern crate wiringpi;
 extern crate home_easy;
+extern crate libc;
+extern crate log4rs;
+extern crate wiringpi;
 
-use std::time::Duration;
 use std::thread;
+use std::time::Duration;
 
 use log::LogLevelFilter;
 use log4rs::append::console::ConsoleAppender;
@@ -32,22 +32,35 @@ fn main() {
         (@arg INTERRUPTOR: +required "Interruptor number")
         (@arg STATE: +required "On or off")
         (@arg verbose:  -v --verbose ... "Sets the level of verbosity")
-    ).get_matches();
+    )
+    .get_matches();
 
     // Define the level of verbosity and configure the logger accordingly
     let config = match matches.occurrences_of("verbose") {
         0 => Config::builder()
-                .appender(Appender::builder().build("stdout", Box::new(stdout)))
-                .build(Root::builder().appender("stdout").build(LogLevelFilter::Warn))
-                .unwrap(),
+            .appender(Appender::builder().build("stdout", Box::new(stdout)))
+            .build(
+                Root::builder()
+                    .appender("stdout")
+                    .build(LogLevelFilter::Warn),
+            )
+            .unwrap(),
         1 => Config::builder()
-                .appender(Appender::builder().build("stdout", Box::new(stdout)))
-                .build(Root::builder().appender("stdout").build(LogLevelFilter::Info))
-                .unwrap(),
+            .appender(Appender::builder().build("stdout", Box::new(stdout)))
+            .build(
+                Root::builder()
+                    .appender("stdout")
+                    .build(LogLevelFilter::Info),
+            )
+            .unwrap(),
         2 | _ => Config::builder()
-                .appender(Appender::builder().build("stdout", Box::new(stdout)))
-                .build(Root::builder().appender("stdout").build(LogLevelFilter::Debug))
-                .unwrap(),
+            .appender(Appender::builder().build("stdout", Box::new(stdout)))
+            .build(
+                Root::builder()
+                    .appender("stdout")
+                    .build(LogLevelFilter::Debug),
+            )
+            .unwrap(),
     };
 
     // Initilalize the logger.
@@ -56,7 +69,7 @@ fn main() {
     unsafe {
         if libc::setuid(0) != 0 {
             eprintln!("This program needs root privileges!");
-            return
+            return;
         }
     }
 
@@ -68,32 +81,32 @@ fn main() {
             Err(e) => {
                 eprintln!("Wrong input for pin parameter!");
                 eprintln!("{}", e);
-                return
-            },
+                return;
+            }
         },
         sender: match matches.value_of("SENDER").unwrap().parse::<u32>() {
             Ok(r) => r,
             Err(e) => {
                 eprintln!("Wrong input for sender parameter!");
                 eprintln!("{}", e);
-                return
-            },
+                return;
+            }
         },
         interruptor: match matches.value_of("INTERRUPTOR").unwrap().parse::<u32>() {
             Ok(r) => r,
             Err(e) => {
                 eprintln!("Wrong input for interruptor parameter!");
                 eprintln!("{}", e);
-                return
-            },
+                return;
+            }
         },
         state: match matches.value_of("STATE").unwrap().parse::<String>() {
             Ok(r) => r,
             Err(e) => {
                 eprintln!("Wrong input for state parameter!");
                 eprintln!("{}", e);
-                return
-            },
+                return;
+            }
         },
     };
 
