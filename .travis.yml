@@ -1,7 +1,11 @@
-language: generic
+rust:
+  - stable
+  - beta
+  - nightly
 os:
   - linux
-dist: trusty
+arch:
+  - arm64
 sudo: required
 
 env:
@@ -9,22 +13,9 @@ env:
   - RUST=beta
   - RUST=stable
 
-# Install rust
 install:
-  - sudo apt-get install gcc-arm-linux-gnueabihf
-  - curl https://sh.rustup.rs -sSf | sh -s -- -y
-  - export PATH="$HOME/.cargo/bin:$PATH"
-  - rustup toolchain install $RUST
-  - rustup default $RUST
-  - rustup target add arm-unknown-linux-gnueabihf
   - rustc -V
   - cargo -V
-  - cp ci/config ~/.cargo/config
-  - git clone https://github.com/raspberrypi/tools.git ~/pi-tools
-  - cp ci/gcc-sysroot ~/pi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
-  - chmod +x ~/pi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/gcc-sysroot
 
 script:
-  - ./cross64 "build -v"
-  - ./cross64 "doc -v"
-  - cargo build -v --target=arm-unknown-linux-gnueabihf
+  - cargo build -v
