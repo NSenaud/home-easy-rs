@@ -19,10 +19,18 @@ architecture (tested on Raspberry Pi):
 cross build --target=armv7-unknown-linux-musleabihf --release
 ```
 
+Use in a Container
+------------------
+
 You can use the `Makefile` directly to build a release version and create a
 Docker image to deploy easily.
 ```bash
 make release
+```
+
+On your Raspberry Pi, you can then run the `dios` command from Docker:
+```bash
+docker run --device /dev/gpiomem dios:v0.2.0 ./dios 0 12341234 1 off
 ```
 
 CLI Utility Usage
