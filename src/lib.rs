@@ -3,7 +3,6 @@ extern crate log;
 extern crate libc;
 extern crate log4rs;
 extern crate rppal;
-extern crate wiringpi;
 
 pub mod prelude;
 
@@ -11,8 +10,7 @@ use std::mem::MaybeUninit;
 use std::{thread, time};
 
 use libc::{sched_get_priority_max, sched_setscheduler};
-use wiringpi::pin::Value::{High, Low};
-use wiringpi::pin::{OutputPin, WiringPi};
+use rppal::gpio::OutputPin;
 
 use prelude::*;
 
@@ -50,21 +48,21 @@ pub unsafe fn scheduler_standard() {
     info!("Switched to standard scheduler.");
 }
 
-fn send_bit(pin: &OutputPin<WiringPi>, bit: bool) {
+fn send_bit(pin: &mut OutputPin, bit: bool) {
     debug!("Sending bit: {}", bit);
 
     let small_delay = time::Duration::new(0, 275000);
     let large_delay = time::Duration::new(0, 1225000);
 
     if bit {
-        pin.digital_write(High);
+        pin.set_high();
         thread::sleep(small_delay);
-        pin.digital_write(Low);
+        pin.set_low();
         thread::sleep(large_delay);
     } else {
-        pin.digital_write(High);
+        pin.set_high();
         thread::sleep(small_delay);
-        pin.digital_write(Low);
+        pin.set_low();
         thread::sleep(small_delay);
     }
 }
@@ -81,12 +79,9 @@ fn power2(power: usize) -> u32 {
 }
 
 impl<'a> EncodedFrame<'a> {
-    pub fn from_decoded<'b>(
-        decoded: &DecodedFrame,
-        pin: &'b OutputPin<WiringPi>,
-    ) -> EncodedFrame<'b> {
+    pub fn from_decoded<'b>(decoded: &DecodedFrame, pin: &'b mut OutputPin) -> EncodedFrame<'b> {
         let mut encoded = EncodedFrame {
-            pin: pin,
+            pin,
             sender: [false; 26],
             interruptor: [false; 4],
             state: match decoded.state.as_str() {
@@ -131,7 +126,7 @@ impl<'a> EncodedFrame<'a> {
     }
 }
 
-fn send_pair(pin: &OutputPin<WiringPi>, bit: bool) {
+fn send_pair(pin: &mut OutputPin, bit: bool) {
     debug!("Send pair for bit: {}", bit);
 
     if bit {
@@ -143,20 +138,20 @@ fn send_pair(pin: &OutputPin<WiringPi>, bit: bool) {
     }
 }
 
-pub fn transmit(frame: &EncodedFrame) {
+pub fn transmit(frame: &mut EncodedFrame) {
     let wait_delay = time::Duration::new(0, 275000);
     let second_lock_delay = time::Duration::new(0, 2675000);
     let first_lock_delay = time::Duration::new(0, 9900000);
 
-    frame.pin.digital_write(High);
+    frame.pin.set_high();
     thread::sleep(wait_delay);
-    frame.pin.digital_write(Low);
+    frame.pin.set_low();
     thread::sleep(first_lock_delay);
-    frame.pin.digital_write(High);
+    frame.pin.set_high();
     thread::sleep(wait_delay);
-    frame.pin.digital_write(Low);
+    frame.pin.set_low();
     thread::sleep(second_lock_delay);
-    frame.pin.digital_write(High);
+    frame.pin.set_high();
 
     // Code from emitor (emitor ID)
     for b in frame.sender.iter() {
@@ -174,9 +169,9 @@ pub fn transmit(frame: &EncodedFrame) {
         send_pair(frame.pin, *b);
     }
 
-    frame.pin.digital_write(High);
+    frame.pin.set_high();
     thread::sleep(wait_delay);
-    frame.pin.digital_write(Low);
+    frame.pin.set_low();
 }
 
 #[cfg(test)]

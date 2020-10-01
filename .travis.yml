@@ -7,16 +7,6 @@ os:
   - linux
 arch:
   - arm64
-sudo: required
-
-env:
-  - RUST=nightly
-  - RUST=beta
-  - RUST=stable
-
-install:
-  - rustc -V
-  - cargo -V
 
 script:
   - cargo build -v

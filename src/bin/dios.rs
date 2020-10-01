@@ -5,7 +5,6 @@ extern crate log;
 extern crate home_easy;
 extern crate libc;
 extern crate log4rs;
-extern crate wiringpi;
 
 use std::thread;
 use std::time::Duration;
@@ -13,6 +12,7 @@ use std::time::Duration;
 use log::LogLevelFilter;
 use log4rs::append::console::ConsoleAppender;
 use log4rs::config::{Appender, Config, Root};
+use rppal::gpio::Gpio;
 
 use home_easy::prelude::{DecodedFrame, EncodedFrame};
 use home_easy::{scheduler_realtime, transmit};
@@ -76,7 +76,7 @@ fn main() {
     unsafe { scheduler_realtime() };
 
     let user_input = DecodedFrame {
-        pin: match matches.value_of("PIN").unwrap().parse::<u16>() {
+        pin: match matches.value_of("PIN").unwrap().parse::<u8>() {
             Ok(r) => r,
             Err(e) => {
                 eprintln!("Wrong input for pin parameter!");
@@ -116,15 +116,17 @@ fn main() {
     info!("\tinterruptor: {}", user_input.interruptor);
     info!("\tstate: {}", user_input.state);
 
-    info!("Wiringpi setup...");
-    let pi = wiringpi::setup();
     info!("Output pin setup...");
-    let output_pin = pi.output_pin(user_input.pin);
+    let mut output_pin = Gpio::new()
+        .unwrap()
+        .get(user_input.pin)
+        .unwrap()
+        .into_output();
 
-    let output = EncodedFrame::from_decoded(&user_input, &output_pin);
+    let mut output = EncodedFrame::from_decoded(&user_input, &mut output_pin);
 
     for _ in 0..5 {
-        transmit(&output);
+        transmit(&mut output);
         thread::sleep(Duration::from_millis(10));
     }
 }
