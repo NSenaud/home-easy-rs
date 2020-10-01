@@ -19,6 +19,12 @@ architecture (tested on Raspberry Pi):
 cross build --target=armv7-unknown-linux-musleabihf --release
 ```
 
+You can use the `Makefile` directly to build a release version and create a
+Docker image to deploy easily.
+```bash
+make release
+```
+
 CLI Utility Usage
 -----------------
 
